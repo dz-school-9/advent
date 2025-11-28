@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7-денний Адвент-календар (25-31 грудня)</title>
+    <!-- Підключення Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Підключення бібліотеки Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <!-- Налаштування шрифту Inter та додаткових шрифтів для кожного дня -->
+    <style>
+        /* Імпортуємо 7 різних шрифтів */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Bebas+Neue&family=Dancing+Script:wght@400..700&family=Pacifico&family=Oswald:wght@200..700&family=Shadows+Into+Light&family=Monoton&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            /* НОВИЙ НОВОГОДНИЙ ФОН: яскраве боке та вогники */
+            background-image: url('https://img.freepik.com/free-vector/gradient-spheres-background_52683-76367.jpg?t=st=1764260647~exp=1764264247~hmac=d4d223786256af79938cbe621afa893babbb4c4c5e8b43b22dec338a74bae345&w=1480') !important; 
+			/* background-image: url('https://images.unsplash.com/photo-1544485012-1f3c5f662a67?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') !important; */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: #333;
+        }
+        .day-card {
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+            user-select: none;
+            backdrop-filter: blur(8px);
+            /* ВИДАЛЕНО: background-color та border-color для динамічного встановлення */
+        }
+        .unlocked {
+            /* Базові стилі для відкритої картки */
+            border-style: solid;
+            border-width: 4px;
+        }
+        .unlocked:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.2), 0 5px 10px -5px rgba(0, 0, 0, 0.04);
+            filter: brightness(1.1); /* Легке освітлення при наведенні */
+        }
+        .locked {
+            filter: grayscale(80%); 
+            cursor: not-allowed;
+            background-color: rgba(200, 200, 200, 0.7) !important; /* Сірий фон для закритого */
+            border-color: rgba(100, 100, 100, 0.7) !important; 
+            color: #555 !important;
+            border-style: solid;
+            border-width: 4px;
+        }
+        /* Стилі для заголовка */
+        header {
+              background-color: rgba(255, 255, 255, 0.9);
+        }
+        header h1 {
+            color: #b91c1c;
+        }
+        /* Стилі для модальних вікон */
+        #modal .bg-white, #task-modal .bg-white, #surprise-modal .bg-white {
+            background-color: rgba(255, 255, 255, 0.98); 
+            backdrop-filter: blur(8px); 
+        }
+        #modal-title, #task-modal-title, #surprise-modal-title {
+            color: #b91c1c;
+        }
+        
+        /* Стилі для списку завдань */
+        .task-list {
+            list-style-type: none; /* Прибираємо стандартні маркери */
+            padding-left: 0;
+        }
+        .task-list li {
+            position: relative;
+            padding-left: 1.5rem; /* Місце для маркеру */
+            margin-bottom: 0.75rem; /* mb-3 */
+            line-height: 1.5;
+            cursor: pointer; /* Робимо завдання клікабельними */
+            transition: color 0.2s;
+        }
+        .task-list li:hover:not(.completed) {
+            color: #ef4444; /* Колір при наведенні для не виконаних */
+        }
+        .task-list li::before {
+            content: '🎁'; /* Використовуємо емодзі як маркер */
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.25em; 
+            line-height: 1;
+        }
+        .task-list li.completed {
+            color: #15803d; /* Зелений для виконаних */
+            text-decoration: line-through;
+            opacity: 0.7;
+            cursor: default;
+        }
+        .task-list li.completed::before {
+            content: '✅'; /* Змінюємо маркер на галочку */
+        }
+        
+        /* === УНІКАЛЬНІ СТИЛІ ШРИФТІВ ДЛЯ ДНІВ (Залишаємо лише font-family) === */
+        /* Колір буде встановлено JS для кращого контрасту */
+        .font-style-1 { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; }
+        .font-style-2 { font-family: 'Dancing Script', cursive; font-weight: 700; }
+        .font-style-3 { font-family: 'Pacifico', cursive; }
+        .font-style-4 { font-family: 'Oswald', sans-serif; font-weight: 600; }
+        .font-style-5 { font-family: 'Shadows Into Light', cursive; font-size: 50px !important; }
+        .font-style-6 { font-family: 'Monoton', cursive; }
+        .font-style-7 { font-family: 'Inter', sans-serif; font-weight: 900; }
+
+        /* Стилі для зображення Санти */
+        .santa-image-container {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .santa-image {
+            max-width: 150px;
+            height: auto;
+            border-radius: 9999px; /* Кругле зображення */
+            border: 5px solid #ef4444; /* Товста червона рамка */
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            display: inline-block;
+        }
+
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+
+    <!-- Заголовок -->
+    <header class="text-center mb-8 p-4 bg-white bg-opacity-90 rounded-lg shadow-xl">
+        <h1 class="text-4xl font-extrabold sm:text-5xl">
+            ✨ Новорічний Адвент-календар ✨
+        </h1>
+        <p class="text-lg text-gray-700 mt-2">
+            25 - 31 Грудня. Відкрийте свій сюрприз дня!
+        </p>
+    </header>
+
+    <!-- Сітка календаря -->
+    <main id="calendar-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-6 max-w-6xl w-full mx-auto">
+        <!-- Картки будуть згенеровані JavaScript -->
+    </main>
+
+    <!-- Основне модальне вікно (список завдань) -->
+    <div id="modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 relative">
+            <button onclick="hideModal('modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-3xl font-bold">&times;</button>
+            <h2 id="modal-title" class="text-3xl font-bold mb-4"></h2>
+
+            <!-- Контейнер для зображення Санти -->
+            <div class="santa-image-container">
+                <img class="santa-image" src="https://sketchok.com/images/articles/08-other/11-people/04/23m.jpg" alt="Санта Клаус" class="mx-auto">
+                <p class="text-sm font-semibold text-red-600 mt-2">Повідомлення від Санти:</p>
+            </div>
+            
+            <!-- Тут буде список завдань UL -->
+            <div class="text-gray-700 text-lg leading-relaxed">
+                <ul id="modal-content" class="task-list"></ul>
+            </div>
+            <div id="modal-footer" class="mt-6 text-sm text-gray-500 italic border-t pt-4"></div>
+        </div>
+    </div>
+
+    <!-- Додаткові модальні вікна -->
+
+    <!-- Модальне вікно для виконання завдання -->
+    <div id="task-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 relative">
+            <button onclick="hideModal('task-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-3xl font-bold">&times;</button>
+            <h3 id="task-modal-title" class="text-2xl font-bold mb-4 text-red-600"></h3>
+            
+            <div class="santa-image-container">
+                <img class="santa-image" src="https://sketchok.com/images/articles/08-other/11-people/04/23m.jpg" alt="Санта думає" class="mx-auto">
+                <p class="text-sm font-semibold text-gray-600 mt-2">Виконайте завдання:</p>
+            </div>
+
+            <p id="task-modal-content" class="text-gray-700 text-lg mb-6"></p>
+
+            <div class="bg-yellow-100 p-3 rounded-lg border border-yellow-300 text-sm text-yellow-700 mb-6">
+                <p>💡 Щоб відзначити завдання як виконане, просто натисніть кнопку нижче, коли завершите його у реальному житті!</p>
+            </div>
+
+            <!-- Приховані поля для передачі даних про завдання -->
+            <input type="hidden" id="current-task-day">
+            <input type="hidden" id="current-task-index">
+
+            <button id="complete-task-button" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 shadow-md">
+                ✅ Я ВИКОНАВ ЦЕ ЗАВДАННЯ!
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальне вікно фінального сюрпризу -->
+    <div id="surprise-modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full p-8 relative text-center">
+            <button onclick="hideModal('surprise-modal')" class="absolute top-4 right-4 text-gray-500 hover:text-gray-900 text-3xl font-bold">&times;</button>
+            <h3 id="surprise-modal-title" class="text-4xl font-extrabold mb-4 text-green-600 animate-pulse">🎉 ВЕЛИКИЙ СЮРПРИЗ! 🎉</h3>
+            
+            <div class="santa-image-container">
+                <img class="santa-image" src="https://sketchok.com/images/articles/08-other/11-people/04/23m.jpg" alt="Щасливий Санта" class="mx-auto">
+            </div>
+
+            <p id="surprise-modal-content" class="text-gray-800 text-xl mb-6">
+                Ти виконав усі завдання цього дня! Санта дуже тобою пишається!
+            </p>
+            <p class="text-2xl font-semibold text-red-600">
+                Твій подарунок: "Відпочинок, заслужений чемпіоном!"
+            </p>
+            <p class="text-md text-gray-500 italic mt-4">
+                (Насолоджуйся почуттям виконаного обов'язку. Ти це заслужив!)
+            </p>
+        </div>
+    </div>
+
+
+    <script>
+        // *** ВИПРАВЛЕННЯ: Скидаємо прогрес при кожному завантаженні сторінки, щоб завдання були "готовими для гри" ***
+        const STORAGE_KEY = 'advent_calendar_progress';
+        localStorage.removeItem(STORAGE_KEY); 
+        // ---------------------------------------------------------------------------------------------------------
+        
+        // Глобальна змінна для доступу до даних про завдання
+        let currentDayTasks = {};
+        
+        // Функція для отримання прогресу з localStorage
+        function getProgress() {
+            const progress = localStorage.getItem(STORAGE_KEY);
+            return progress ? JSON.parse(progress) : {};
+        }
+
+        // Функція для збереження прогресу в localStorage
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Функція для правильного схиляння слова "день"
+        function pluralizeDays(count) {
+            if (count % 10 === 1 && count % 100 !== 11) {
+                return 'день'; 
+            }
+            if (count % 10 >= 2 && count % 10 <= 4 && (count % 100 < 10 || count % 100 >= 20)) {
+                return 'дня'; 
+            }
+            return 'днів'; 
+        }
+        
+        // Елементи модальних вікон
+        const modal = document.getElementById('modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content'); // UL елемент
+        const modalFooter = document.getElementById('modal-footer');
+        
+        const taskModal = document.getElementById('task-modal');
+        const taskModalTitle = document.getElementById('task-modal-title');
+        const taskModalContent = document.getElementById('task-modal-content');
+        const currentTaskDay = document.getElementById('current-task-day');
+        const currentTaskIndex = document.getElementById('current-task-index');
+        const completeTaskButton = document.getElementById('complete-task-button');
+
+        const surpriseModal = document.getElementById('surprise-modal');
+
+
+        // Функція, що приховує модальні вікна
+        function hideModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            document.getElementById(id).classList.remove('flex');
+        }
+
+        // Універсальна функція для показу модальних вікон
+        function showModal(id) {
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('flex');
+        }
+
+        // --- НОВА ФУНКЦІЯ: ЗАПУСК КОНФЕТІ ---
+        function launchConfetti() {
+            // Використовуємо canvas-confetti для ефекту феєрверку
+            // Перевіряємо, чи доступна функція confetti
+            if (typeof confetti === 'undefined') {
+                console.error("Confetti library not loaded.");
+                return;
+            }
+
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            // Вибух конфеті з лівого нижнього кута
+            confetti(Object.assign({}, defaults, {
+                particleCount: 80,
+                origin: { x: 0.2, y: 0.8 },
+                colors: ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#ffffff'] // Різні кольори
+            }));
+
+            // Вибух конфеті з правого нижнього кута
+            confetti(Object.assign({}, defaults, {
+                particleCount: 80,
+                origin: { x: 0.8, y: 0.8 },
+                colors: ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#ffffff']
+            }));
+            
+            // Додатковий невеликий вибух зверху
+            confetti(Object.assign({}, defaults, {
+                particleCount: 40,
+                origin: { x: 0.5, y: 0.5 },
+                gravity: 0.8,
+                spread: 100,
+                startVelocity: 40,
+                scalar: 0.8
+            }));
+        }
+        // -------------------------------------
+
+
+        // Обробник кліку на фон для закриття
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) hideModal('modal');
+        });
+        taskModal.addEventListener('click', (e) => {
+            if (e.target === taskModal) hideModal('task-modal');
+        });
+        surpriseModal.addEventListener('click', (e) => {
+            if (e.target === surpriseModal) hideModal('surprise-modal');
+        });
+
+        // *** КОНФІГУРАЦІЯ КАЛЕНДАРЯ ***
+        const FONT_CLASSES = [
+            'font-style-1', 'font-style-2', 'font-style-3', 'font-style-4', 
+            'font-style-5', 'font-style-6', 'font-style-7'
+        ];
+        
+        // --- НОВІ КОЛЬОРИ ДЛЯ ДНІВ ЗГІДНО ІЗ ЗАПИТОМ ---
+        const DAY_COLORS = {
+            1: '#EA4391', // 25 грудня
+            2: '#0092DF', // 26 грудня
+            3: '#B24191', // 27 грудня
+            4: '#F08801', // 28 грудня
+            5: '#01A08F', // 29 грудня
+            6: '#EC5E50', // 30 грудня
+            7: '#43A821'  // 31 грудня
+        };
+        
+        // Контент з 3 завданнями
+        const ADVENT_DAYS = [
+            { day: 1, date: "25 ГРУДНЯ", title: "☕️ День Затишку та Релаксу", 
+              tasks: [
+                "Налийте собі улюблений гарячий напій (чай, каву, какао).",
+                "Виділіть 15 хвилин, щоб спокійно посидіти, насолоджуючись моментом без телефону та роботи.",
+                "Знайдіть та прочитайте вголос смішний новорічний анекдот або вірш."
+              ], 
+              footer: "Почніть із цього! Веселого Різдва!" 
+            },
+            { day: 2, date: "26 ГРУДНЯ", title: "🎵 Музична Година та Рух", 
+              tasks: [
+                "Створіть плейлист із 5 пісень, які миттєво піднімають вам настрій.",
+                "Послухайте його прямо зараз, пританцьовуючи!",
+                "Розішліть цю пісню трьом друзям, яким потрібна позитивна енергія."
+              ], 
+              footer: "Ваш сюрприз на сьогодні!" 
+            },
+            { day: 3, date: "27 ГРУДНЯ", title: "🧘 Міні-Медитація та Розум", 
+              tasks: [
+                "Знайдіть тихе місце і присвятіть 5 хвилин глибокому диханню та повному розслабленню.",
+                "Вивчіть одне нове слово українською або іноземною мовою.",
+                "Розгадайте одну просту загадку або судоку."
+              ], 
+              footer: "Відкриється завтра." 
+            },
+            { day: 4, date: "28 ГРУДНЯ", title: "📝 Лист Подяки та Доброти", 
+              tasks: [
+                "Напишіть коротке повідомлення (текст, email, замітка) комусь, кого ви цінуєте. Розкажіть, за що ви вдячні.",
+                "Зробіть комплімент першій людині, яку зустрінете.",
+                "Приберіть ідеально одну невелику частину вашої кімнати (наприклад, письмовий стіл або полицю)."
+              ], 
+              footer: "Залишилось 4 дні до Нового року!" 
+            },
+            { day: 5, date: "29 ГРУДНЯ", title: "🎨 Кольоротерапія та Творчість", 
+              tasks: [
+                "Одягніться сьогодні у ваш найулюбленіший колір або додайте яскравий аксесуар цього кольору.",
+                "Намалюйте швидкий 5-хвилинний малюнок (навіть каракулі) або зробіть орігамі.",
+                "З'їжте щось незвичне на обід/вечерю."
+              ], 
+              footer: "Залишилось 3 дні до Нового року!" 
+            },
+            { day: 6, date: "30 ГРУДНЯ", title: "📖 Незнайома Книга та Експлорація", 
+              tasks: [
+                "Прочитайте першу сторінку випадкової книги, яка є у вас вдома.",
+                "Сплануйте короткий 15-хвилинний маршрут прогулянки, яким ви ще ніколи не ходили.",
+                "Надішліть новорічну листівку або повідомлення тому, з ким давно не спілкувалися."
+              ], 
+              footer: "Передостанній день року!" 
+            },
+            { day: 7, date: "31 ГРУДНЯ", title: "🎉 План на Майбутнє та Свято", 
+              tasks: [
+                "Заплануйте невелику приємну подію на наступний тиждень.",
+                "Сфотографуйте свій найсвятковіший куточок у домі.",
+                "Вигадайте своє новорічне бажання та запишіть його на папері."
+              ], 
+              footer: "Великий фінал! З Новим Роком!" 
+            },
+        ];
+
+        // *** ВАЖЛИВО: ВСТАНОВЛЕННЯ ПОЧАТКОВОЇ ДАТИ ЗГІДНО ІЗ ЗАПИТОМ ***
+        const START_DATE = new Date('2025-11-25T00:00:00'); // День 1 = 25.12.2025
+
+        const MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); 
+
+        const dayDifference = Math.floor((today.getTime() - START_DATE.getTime()) / MS_PER_DAY);
+        const UNLOCKABLE_DAYS_COUNT = dayDifference + 1;
+
+        const grid = document.getElementById('calendar-grid');
+
+        // Функція для відображення списку завдань у головному модальному вікні
+        function renderTasksInModal(dayData) {
+            const dayNumber = dayData.day;
+            const progress = getProgress();
+            const dayProgress = progress[dayNumber] || {};
+
+            currentDayTasks = dayData; // Зберігаємо поточні дані дня
+            
+            // Перевіряємо, чи всі завдання виконані
+            const completedCount = Object.keys(dayProgress).filter(key => dayProgress[key] === true).length;
+            const allTasksCompleted = completedCount === 3;
+
+
+            let tasksHtml = dayData.tasks.map((task, index) => {
+                const isCompleted = dayProgress[index] === true;
+                const completedClass = isCompleted ? 'completed' : '';
+                
+                return `<li class="${completedClass}" 
+                                data-day="${dayNumber}" 
+                                data-index="${index}" 
+                                data-task-title="${dayData.title}" 
+                                data-task-text="${task.replace(/"/g, '&quot;')}"
+                                ${!isCompleted ? 'onclick="openTaskModal(this)"' : ''}>
+                                ${task}
+                            </li>`;
+            }).join('');
+            
+            modalTitle.textContent = `Сюрприз на ${dayData.date}: ${dayData.title}`;
+            modalContent.innerHTML = tasksHtml; 
+            modalFooter.textContent = dayData.footer;
+            
+            // Показуємо Санту, якщо день відкрито
+            document.querySelector('#modal .santa-image-container').classList.remove('hidden');
+            showModal('modal');
+        }
+
+        // Функція відкриття модального вікна для виконання окремого завдання
+        function openTaskModal(element) {
+            // Приховуємо основне вікно, щоб уникнути накладання
+            hideModal('modal');
+
+            const day = element.getAttribute('data-day');
+            const index = element.getAttribute('data-index');
+            const title = element.getAttribute('data-task-title');
+            const taskText = element.getAttribute('data-task-text');
+
+            taskModalTitle.textContent = `${title} (Завдання ${parseInt(index) + 1} з 3)`;
+            taskModalContent.textContent = taskText;
+
+            // Зберігаємо поточні дані в прихованих полях
+            currentTaskDay.value = day;
+            currentTaskIndex.value = index;
+
+            showModal('task-modal');
+        }
+
+        // Обробник кнопки "Я ВИКОНАВ ЦЕ ЗАВДАННЯ!"
+        completeTaskButton.addEventListener('click', () => {
+            const day = parseInt(currentTaskDay.value);
+            const index = parseInt(currentTaskIndex.value);
+            
+            if (day && index >= 0) {
+                // 1. Оновлюємо прогрес у localStorage
+                const progress = getProgress();
+                progress[day] = progress[day] || {};
+                progress[day][index] = true;
+                saveProgress(progress);
+
+                // 2. Закриваємо модальне вікно виконання завдання
+                hideModal('task-modal');
+
+                // 3. Перевіряємо, чи всі завдання виконані
+                const currentDayData = ADVENT_DAYS.find(d => d.day === day);
+                if (currentDayData) {
+                    const latestProgress = getProgress();
+                    const dayProgress = latestProgress[day] || {};
+                    const completedCount = Object.keys(dayProgress).filter(key => dayProgress[key] === true).length;
+
+                    if (completedCount === 3) {
+                        // Усі завдання виконано: показуємо сюрприз
+                        showModal('surprise-modal');
+                        // !!! ВИКЛИК КОНФЕТІ !!!
+                        launchConfetti();
+                    } else {
+                        // Ще не всі завдання виконано: оновлюємо і показуємо головне вікно
+                        renderTasksInModal(currentDayData);
+                    }
+                }
+            }
+        });
+
+
+        // Створення карток календаря
+        ADVENT_DAYS.forEach((dayData, index) => {
+            const dayNumber = dayData.day;
+            const isUnlockable = dayNumber <= UNLOCKABLE_DAYS_COUNT;
+            const fontClass = FONT_CLASSES[index % FONT_CLASSES.length];
+
+            // Динамічні стилі для відкритих днів
+            const dayColor = DAY_COLORS[dayNumber];
+            // Використовуємо прозорість E0 (88%) для фону і повний колір для рамки
+            const cardColorStyle = isUnlockable ? 
+                `background-color: ${dayColor}E0; border-color: ${dayColor}; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.3);` : 
+                '';
+            
+            // Динамічний клас для кольору тексту
+            const textColorClass = isUnlockable ? 'text-white' : 'text-gray-500';
+
+            const card = document.createElement('div');
+            // Тепер клас 'unlocked' чи 'locked' відповідає за базові стилі, а колір - inline style
+            card.className = `day-card relative h-48 sm:h-64 rounded-xl shadow-lg flex items-center justify-center p-4 transform ${isUnlockable ? 'unlocked' : 'locked'}`;
+            card.setAttribute('data-day', dayNumber);
+            
+            if (isUnlockable) {
+                card.style.cssText = cardColorStyle;
+            }
+
+            card.innerHTML = `
+                <div class="text-center w-full h-full p-2 flex flex-col justify-center items-center">
+                    <div class="text-xs font-medium uppercase mb-1">${dayData.date}</div>
+                    <div class="day-number-text text-7xl leading-none mb-2 transition-all duration-300 ${fontClass} ${textColorClass}">${dayNumber}</div>
+                    <div class="text-xl font-semibold ${textColorClass}">${isUnlockable ? 'Відкрито' : 'Закрито'}</div>
+                </div>
+            `;
+
+            // Обробник натискання
+            if (isUnlockable) {
+                card.addEventListener('click', () => {
+                    renderTasksInModal(dayData);
+                });
+            } else {
+                 card.addEventListener('click', () => {
+                     // ЗМІНЕНО: Новий текст для закритого дня
+                     modalTitle.textContent = `День ${dayNumber} - Поки що Закрито!`;
+                     modalContent.innerHTML = `<p class="text-xl">Сюрприз даного дня відкриється <strong>${dayData.date}</strong>.</p><p class="mt-4 text-sm italic text-gray-500">Зачекайте до півночі, щоб відкрити новий сюрприз!</p>`;
+                     modalFooter.textContent = "";
+                     // Приховуємо Санту, якщо день закрито (це для естетики)
+                     document.querySelector('#modal .santa-image-container').classList.add('hidden'); 
+                     showModal('modal');
+                    });
+            }
+
+            grid.appendChild(card);
+        });
+
+        // Ініціалізація та логування
+        console.log(`--- Advent Calendar Logic ---`);
+        console.log(`ВАЖЛИВО: Прогрес скинуто. Завдання готові для гри.`);
+        console.log(`Початкова дата календаря: 25.12.2025`);
+        console.log(`Total unlockable days (1 to X): ${UNLOCKABLE_DAYS_COUNT}`);
+        console.log(`-----------------------------`);
+    </script>
+</body>
+</html>
