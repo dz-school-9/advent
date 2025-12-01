@@ -23,9 +23,21 @@
             transition: all 0.3s ease-in-out; /* Збільшено час переходу */
             cursor: pointer;
             user-select: none;
-            overflow: hidden; /* Щоб зображення і контент не виходили за межі картки */
+            /*overflow: hidden;*/ /* Щоб зображення і контент не виходили за межі картки */
             position: relative; /* Важливо для позиціонування внутрішніх елементів */
+			
+			background-size: contain;   /* сохраняет целостность */
+			background-repeat: no-repeat;
+			background-position: center;
+			overflow: visible;          /* обязательно */
         }
+		.day-card img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain; /* ВОТ ЭТО: делает изображение целым */
+			pointer-events: none;
+		}
+
         .unlocked {
              /* Базові стилі для відкритої картки */
         }
