@@ -65,13 +65,13 @@
                 height: 100px;
             }
             /* Нові, більш вертикальні позиції */
-            .day-card[data-day="1"] { top: 40%; left: 0%; transform: rotate(-5deg); scale(0.8);}
-            .day-card[data-day="2"] { top: 60%; left: 0%; transform: rotate(10deg); scale(0.8);}
-            .day-card[data-day="3"] { top: 0%; right: 0%; transform: rotate(-15deg); scale(0.8);}
-            .day-card[data-day="4"] { top: 45%; right: 0%; transform: rotate(5deg); scale(0.8);}
-            .day-card[data-day="5"] { top: 0%; left: 0%; transform: rotate(-10deg); scale(0.8);}
-            .day-card[data-day="6"] { top: 65%; right: 0%; transform: rotate(12deg); scale(0.8);}
-            .day-card[data-day="7"] { top: 20%; left: 30%; transform: rotate(-2deg); z-index: 10; scale(0.8);}
+            .day-card[data-day="1"] { top: 40%; left: 0%; transform: rotate(-5deg); }
+            .day-card[data-day="2"] { top: 60%; left: 0%; transform: rotate(10deg); }
+            .day-card[data-day="3"] { top: 0%; right: 0%; transform: rotate(-15deg); }
+            .day-card[data-day="4"] { top: 45%; right: 0%; transform: rotate(5deg); }
+            .day-card[data-day="5"] { top: 0%; left: 0%; transform: rotate(-10deg); }
+            .day-card[data-day="6"] { top: 65%; right: 0%; transform: rotate(12deg); }
+            .day-card[data-day="7"] { top: 20%; left: 30%; transform: rotate(-2deg); z-index: 10; }
         }
 		
         @media (max-width: 768px) {
@@ -83,13 +83,13 @@
                 height: 120px;
             }
             /* Нові, більш вертикальні позиції */
-            .day-card[data-day="1"] { top: 27%; left: 0%; transform: rotate(-5deg); scale(0.8);}
-            .day-card[data-day="2"] { top: 55%; right: 15%; transform: rotate(10deg); scale(0.8);}
-            .day-card[data-day="3"] { top: 0%; right: 0%; transform: rotate(-15deg); scale(0.8);}
-            .day-card[data-day="4"] { top: 30%; right: 7%; transform: rotate(5deg); scale(0.8);}
-            .day-card[data-day="5"] { top: 0%; left: 10%; transform: rotate(-10deg); scale(0.8);}
-            .day-card[data-day="6"] { top: 65%; right: 15%; transform: rotate(12deg); scale(0.8);}
-            .day-card[data-day="7"] { top: 13%; left: 37%; transform: rotate(-2deg); z-index: 10; scale(0.8);}
+            .day-card[data-day="1"] { top: 27%; left: 0%; transform: rotate(-5deg); }
+            .day-card[data-day="2"] { top: 55%; right: 15%; transform: rotate(10deg); }
+            .day-card[data-day="3"] { top: 0%; right: 0%; transform: rotate(-15deg); }
+            .day-card[data-day="4"] { top: 30%; right: 7%; transform: rotate(5deg); }
+            .day-card[data-day="5"] { top: 0%; left: 10%; transform: rotate(-10deg); }
+            .day-card[data-day="6"] { top: 65%; right: 15%; transform: rotate(12deg); }
+            .day-card[data-day="7"] { top: 13%; left: 37%; transform: rotate(-2deg); z-index: 10; }
         }
 
         /* Стилі для заголовка та модальних вікон */
@@ -568,31 +568,31 @@
 
 
         // Створення карток календаря
-        function createCalendarCards() {
-            ADVENT_DAYS.forEach((dayData, index) => {
-                const dayNumber = dayData.day;
-                const isUnlockable = dayNumber <= UNLOCKABLE_DAYS_COUNT;
-                
-                const fontClass = 'font-extrabold';
-                const imagePath = IMAGE_PATHS[index]; // img1.png, img2.png, etc.
+        function createCalendarCards() {
+            ADVENT_DAYS.forEach((dayData, index) => {
+                const dayNumber = dayData.day;
+                const isUnlockable = dayNumber <= UNLOCKABLE_DAYS_COUNT;
+                
+                const fontClass = 'font-extrabold';
+                const imagePath = IMAGE_PATHS[index]; // img1.png, img2.png, etc.
 
-                // Динамічний клас для кольору тексту
-                const textColorClass = 'text-white'; // Форсуємо білий для контрасту
+                // Динамічний клас для кольору тексту
+                const textColorClass = 'text-white'; // Форсуємо білий для контрасту
 
-                const card = document.createElement('div');
-                // *** ВИПРАВЛЕНО ***: Додано клас 'overflow-hidden'
-                card.className = `day-card absolute w-40 h-40 md:w-52 md:h-52 **overflow-hidden** rounded-xl shadow-lgq flex items-center justify-center p-0 transform ${isUnlockable ? 'unlocked' : 'locked'}`;
-                card.setAttribute('data-day', dayNumber);
+                const card = document.createElement('div');
+                // ЗМІНЕНО: Додано 'absolute' та фіксовані розміри w-40 h-40 для нелінійного розташування
+                card.className = `day-card absolute w-40 h-40 rounded-xl shadow-lgq flex items-center justify-center p-0 transform ${isUnlockable ? 'unlocked' : 'locked'}`;
+                card.setAttribute('data-day', dayNumber);
 
-                // --- ЗМІНЕНО: Виправлені класи зображення ---
-                card.innerHTML = `
-                    <!-- 1. Зображення, яке заповнює картку. Використовуйте свій шлях ./img/${imagePath} -->
-                    <img src="./img/${imagePath}"
-                        onerror="this.onerror=null;this.src='https://placehold.co/160x160/${isUnlockable ? '444444' : 'aaaaaa'}/ffffff?text=IMG+${dayNumber}'"
-                        alt="Зображення для Дня ${dayNumber}"
-                        class="absolute inset-0 w-full h-full object-cover transition-all duration-300"
-                    >
-                `;
+                // --- ЗМІНЕНО: Додано зображення та прозорий оверлей для тексту ---
+                card.innerHTML = `
+                    <!-- 1. Зображення, яке заповнює картку. Використовуйте свій шлях ./img/${imagePath} -->
+                    <img src="./img/${imagePath}"
+                        onerror="this.onerror=null;this.src='https://placehold.co/160x160/${isUnlockable ? '444444' : 'aaaaaa'}/ffffff?text=IMG+${dayNumber}'"
+                        alt="Зображення для Дня ${dayNumber}"
+                        class="absolute inset-0 w-full h-full object-cover"
+                    >
+                `;
                 // -------------------------------------------------------------------
 
                 // Обробник натискання
