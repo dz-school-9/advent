@@ -568,31 +568,31 @@
 
 
         // Створення карток календаря
-        function createCalendarCards() {
-            ADVENT_DAYS.forEach((dayData, index) => {
-                const dayNumber = dayData.day;
-                const isUnlockable = dayNumber <= UNLOCKABLE_DAYS_COUNT;
-                
-                const fontClass = 'font-extrabold';
-                const imagePath = IMAGE_PATHS[index]; // img1.png, img2.png, etc.
+        function createCalendarCards() {
+            ADVENT_DAYS.forEach((dayData, index) => {
+                const dayNumber = dayData.day;
+                const isUnlockable = dayNumber <= UNLOCKABLE_DAYS_COUNT;
+                
+                const fontClass = 'font-extrabold';
+                const imagePath = IMAGE_PATHS[index]; // img1.png, img2.png, etc.
 
-                // Динамічний клас для кольору тексту
-                const textColorClass = 'text-white'; // Форсуємо білий для контрасту
+                // Динамічний клас для кольору тексту
+                const textColorClass = 'text-white'; // Форсуємо білий для контрасту
 
-                const card = document.createElement('div');
-                // ЗМІНЕНО: Додано 'absolute' та фіксовані розміри w-40 h-40 для нелінійного розташування
-                card.className = `day-card absolute w-40 h-40 rounded-xl shadow-lgq flex items-center justify-center p-0 transform ${isUnlockable ? 'unlocked' : 'locked'}`;
-                card.setAttribute('data-day', dayNumber);
+                const card = document.createElement('div');
+                // *** ВИПРАВЛЕНО ***: Додано клас 'overflow-hidden'
+                card.className = `day-card absolute w-40 h-40 md:w-52 md:h-52 **overflow-hidden** rounded-xl shadow-lgq flex items-center justify-center p-0 transform ${isUnlockable ? 'unlocked' : 'locked'}`;
+                card.setAttribute('data-day', dayNumber);
 
-                // --- ЗМІНЕНО: Додано зображення та прозорий оверлей для тексту ---
-                card.innerHTML = `
-                    <!-- 1. Зображення, яке заповнює картку. Використовуйте свій шлях ./img/${imagePath} -->
-                    <img src="./img/${imagePath}"
-                        onerror="this.onerror=null;this.src='https://placehold.co/160x160/${isUnlockable ? '444444' : 'aaaaaa'}/ffffff?text=IMG+${dayNumber}'"
-                        alt="Зображення для Дня ${dayNumber}"
-                        class="absolute inset-0 w-full h-full object-cover"
-                    >
-                `;
+                // --- ЗМІНЕНО: Виправлені класи зображення ---
+                card.innerHTML = `
+                    <!-- 1. Зображення, яке заповнює картку. Використовуйте свій шлях ./img/${imagePath} -->
+                    <img src="./img/${imagePath}"
+                        onerror="this.onerror=null;this.src='https://placehold.co/160x160/${isUnlockable ? '444444' : 'aaaaaa'}/ffffff?text=IMG+${dayNumber}'"
+                        alt="Зображення для Дня ${dayNumber}"
+                        class="absolute inset-0 w-full h-full object-cover transition-all duration-300"
+                    >
+                `;
                 // -------------------------------------------------------------------
 
                 // Обробник натискання
