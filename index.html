@@ -205,11 +205,6 @@
         }
         // ----------------------------------------------
 
-        // Перевірка, чи є рядок URL-адресою (достатньо для наших цілей)
-        function isUrl(str) {
-            return str.startsWith('http://') || str.startsWith('https://');
-        }
-
         // --- НОВА ФУНКЦІЯ: ВИКОНАННЯ ЗАВДАННЯ ПІСЛЯ КЛІКУ НА ПОСИЛАННЯ ---
         function completeTaskByLink(day, index) {
             // Перетворюємо в числа, оскільки параметри передаються як рядки
@@ -232,7 +227,7 @@
                     const completedCount = Object.keys(dayProgress).filter(key => dayProgress[key] === true).length;
 
                     // 3. Якщо всі завдання виконані, показуємо сюрприз
-                    if (completedCount === 3) {
+                    if (completedCount === 5) {
                         hideModal('modal'); // Приховуємо основне вікно
                         showModal('surprise-modal');
 						// Визначаємо HTML-елемент
@@ -267,21 +262,172 @@
             'img1.png', 'img2.png', 'img3.png', 'img4.png', 'img5.png', 'img6.png', 'img7.png'
         ];
         
-        // Контент з 3 завданнями
+        // Контент з 5 завданнями
         const ADVENT_DAYS = [
-            { day: 1, date: "❄️22 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-" ], footer: "" },
-            { day: 2, date: "❄️23 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-" ], footer: "Ваш сюрприз на сьогодні!" },
-            { day: 3, date: "❄️24 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-" ], footer: "Відкриється завтра." },
-            { day: 4, date: "❄️25 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-" ], footer: "" },
-            { day: 5, date: "❄️26 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-" ],
-              footer: "" },
-            { day: 6, date: "❄️27 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-" ],
-              footer: "" },
-            { day: 7, date: "❄️28 грудня❄️", tasks: [ "https://learningapps.org/view32926834", "https://wordwall.net/resource/82677379", "https://www.storyjumper.com/book/read/109095206/-"], footer: "" },
+            { day: 1, date: "❄️22 грудня❄️",  tasks: [ 
+					{  url: "https://drive.google.com/file/d/1vdnsYtGc8bTWepMZxQj1UPQ5z4kgzRSr/view", 
+					  title: "Плакат «Думки навиворіт»" },
+					{ 
+					  url: "https://www.educaplay.com/learning-resources/27005380-learning_resource.html",
+					  title: "Математична гра «Постав на місце»"
+					},
+					{ 
+					  url: "https://santatracker.google.com/intl/uk/runner.html",
+					  title: "Гра «Олень–бігун»"
+					},
+					{ 
+					  url: "https://www.jigsawplanet.com/?rc=play&pid=273ec2ac7321",
+					  title: "Пазл «Різдво – свято починається»"
+					},
+					{ 
+					  url: "https://wordwall.net/uk/resource/103081381",
+					  title: "Психологічна хвилинка «Як зберегти святковий настрій»"
+					}
+				 ], footer: "" },
+            { day: 2, 
+				date: "❄️23 грудня❄️", 
+				tasks: [
+					{ 
+					  url: "https://wordwall.net/resource/26610438",
+					  title: "«Help Santa Find His Lost Words!»"
+					},
+					{ 
+					  url: "https://learningapps.org/display?v=prq626zhc25",
+					  title: "«Побудуй молекулу»"
+					},
+					{ 
+					  url: "https://drive.google.com/file/d/1-qd3x3ZBx2DnYG5AUvPT6CfE1YlfUiVF/view",
+					  title: "«Павутина слів»"
+					},
+					{ 
+					  url: "https://learningapps.org/view6536158",
+					  title: "«Зимові види спорту» "
+					},
+					{ 
+					  url: "https://wordwall.net/uk/resource/103066678",
+					  title: "Святкуємо Різдво на вулиці. Як уберегти себе від переохолодження"
+					}
+				 ], footer: "" },
+            { day: 3, 
+				date: "❄️24 грудня❄️", 
+				tasks: [
+					{ 
+					  url: "https://docs.google.com/presentation/d/1vdoaC4PD-ynW93t0X0wNePc1f3dwSr1n/edit?usp=drivesdk&ouid=114075723706536763962&rtpof=true&sd=true",
+					  title: "Географічна вікторина «Різдвяний настрій»"
+					},
+					{ 
+					  url: "https://gemini.google.com/share/32df25694ff0",
+					  title: "Флешкартки до твору М.В.Гоголя «Ніч перед Різдвом»"
+					},
+					{ 
+					  url: "https://learningapps.org/1288336",
+					  title: "Історичний різдвяний кросворд"
+					},
+					{ 
+					  url: "https://drive.google.com/file/d/1m0ZJcYbtkfHDebh5tbdA1Jo402N6WPJ5/view",
+					  title: "Розгадай головоломку"
+					},
+					{ 
+					  url: "https://wordwall.net/uk/resource/44942495",
+					  title: "Безпека понад усе"
+					}
+				 ], footer: "" },
+            { day: 4, 
+				date: "❄️25 грудня❄️", 
+				tasks: [
+					{ 
+					  url: "https://santatracker.google.com/intl/uk/santasearch.html",
+					  title: "У пошуках Санта Клауса"
+					},
+					{ 
+					  url: "https://view.genially.com/692d94a140b75e9b121566b8/presentation-advent-kalendar-2",
+					  title: "Дізнайся, в яку шкарпетку Санта Клаус поклав подарунок."
+					},
+					{ 
+					  url: "https://learningapps.org/watch?v=pzhjx4nwc25",
+					  title: "Вікторина «Вгадай пісню»"
+					},
+					{ 
+					  url: "https://www.youtube.com/watch?v=o_LlE0qLPE4",
+					  title: "Руханка «Зимова казка»"
+					},
+					{ 
+					  url: "https://padlet.com/unguryanlarisa1963/padlet-yxd3zodkqv4hz6pr",
+					  title: "Кіносеанс «Різдвяний вечір»"
+					}
+				 ], footer: "" },
+            { day: 5, 
+				date: "❄️26 грудня❄️", 
+				tasks: [
+					{ 
+					  url: "https://view.genially.com/692db0068b5e36fabade32fc/presentation-advent-kalendar-3",
+					  title: "Різдвяні смаколики"
+					},
+					{ 
+					  url: "https://docs.google.com/presentation/d/1JEM-20sWksjyvoohAXpjUstPs2v8qvZi/edit?usp=drive_link&ouid=114075723706536763962&rtpof=true&sd=true",
+					  title: "«Третє зайве»"
+					},
+					{ 
+					  url: "https://wordwall.net/uk/resource/84197238",
+					  title: "Різдвяні анаграми"
+					},
+					{ 
+					  url: "https://wordwall.net/ru/resource/103376630",
+					  title: "«Різдвяне ворожіння»"
+					}
+				 ], footer: "" },
+            { day: 6, 
+				date: "❄️27 грудня❄️", 
+				tasks: [
+					{ 
+					  url: "https://wordwall.net/uk/resource/66057600",
+					  title: "«Winter Wonder Challenge». Зима підготувала загадку в кожному зображенні. Чи зможеш знайти правильну відповідь?"
+					},
+					{ 
+					  url: "https://www.educaplay.com/learning-resources/26970977-learning_resource.html",
+					  title: "Природа взимку"
+					},
+					{ 
+					  url: "https://gemini.google.com/share/4328aa557de6",
+					  title: "Інтерактивний квест за твором Ч.Дікенса «Різдвяна пісня в прозі»."
+					},
+					{ 
+					  url: "https://wordwall.net/resource/103560133",
+					  title: "Теплові явища"
+					},
+					{ 
+					  url: "https://santatracker.google.com/codelab.html",
+					  title: "Новорічний пазл"
+					}
+				 ], footer: "" },
+            { day: 7, 
+				date: "❄️28 грудня❄️", 
+				tasks: [
+					{ 
+					  url: "###",
+					  title: " #####"
+					},
+					{ 
+					  url: "###",
+					  title: " #####"
+					},
+					{ 
+					  url: "###",
+					  title: " #####"
+					},
+					{ 
+					  url: "###",
+					  title: " #####"
+					},
+					{ 
+					  url: "###",
+					  title: " #####"
+					}
+				 ], footer: "" },
         ];
 
         // *** ВАЖЛИВО: ВСТАНОВЛЕННЯ ПОЧАТКОВОЇ ДАТИ ЗГІДНО ІЗ ЗАПИТОМ ***
-        const START_DATE = new Date('2025-11-27T00:00:00'); // День 1 = 22.12.2025
+        const START_DATE = new Date('2025-12-04T00:00:00'); // День 1 = 22.12.2025
 
         const MS_PER_DAY = 1000 * 60 * 60 * 24;
         const today = new Date();
@@ -303,114 +449,42 @@
 		}
 
         // Функція для відображення списку завдань у головному модальному вікні
-        function renderTasksInModal(dayData) {
-            const dayNumber = dayData.day;
-            const progress = getProgress();
-            const dayProgress = progress[dayNumber] || {};
+        // Функція для відображення списку завдань у головному модальному вікні
+function renderTasksInModal(dayData) {
+    const dayNumber = dayData.day;
+    const progress = getProgress();
+    const dayProgress = progress[dayNumber] || {};
 
-            currentDayTasks = dayData; // Зберігаємо поточні дані дня
+    currentDayTasks = dayData; // Запамʼятовуємо поточний день
 
-            // Перевіряємо, чи всі завдання виконані
-            const completedCount = Object.keys(dayProgress).filter(key => dayProgress[key] === true).length;
-            // const allTasksCompleted = completedCount === 3; // Не використовується, але зберігаємо для ясності
+    let tasksHtml = dayData.tasks.map((task, index) => {
+        const isCompleted = dayProgress[index] === true;
+        const completedClass = isCompleted ? 'completed' : '';
 
+        // Оскільки тепер кожне завдання — це {url, title}, просто рендеримо <a>
+        return `
+            <li class="${completedClass}">
+                <a href="${task.url}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   onclick="completeTaskByLink(${dayNumber}, ${index});">
+                   ${task.title}
+                </a>
+            </li>
+        `;
+    }).join('');
 
-            let tasksHtml = dayData.tasks.map((task, index) => {
-                const isCompleted = dayProgress[index] === true;
-                const completedClass = isCompleted ? 'completed' : '';
-                const taskText = isUrl(task) ? getLinkText(task) : task; // Використовуємо функцію для тексту посилання
+    modalTitle.textContent = `${dayData.date}`;
+    setModalSubtitleForDay(dayData.day);
 
-                if (isUrl(task)) {
-                    // Якщо це посилання, генеруємо LI з A тегом
-                    return `<li class="${completedClass}">
-                                <a href="${task}" target="_blank" rel="noopener noreferrer"
-                                    onclick="completeTaskByLink(${dayNumber}, ${index});">
-                                    ${taskText}
-                                </a>
-                            </li>`;
-                } else {
-                    // Якщо це звичайний текст, генеруємо LI з обробником для task-modal
-                    return `<li class="${completedClass}"
-                                data-day="${dayNumber}"
-                                data-index="${index}"
-                                data-task-title="${dayData.title}"
-                                data-task-text="${task.replace(/"/g, '&quot;')}"
-                                ${!isCompleted ? 'onclick="openTaskModal(this)"' : ''}>
-                                ${task}
-                            </li>`;
-                }
-            }).join('');
+    modalContent.innerHTML = tasksHtml;
+    modalFooter.textContent = dayData.footer;
 
-            //modalTitle.textContent = `Сюрприз на ${dayData.date}: ${dayData.title}`;
-			modalTitle.textContent = `${dayData.date}`;
-			setModalSubtitleForDay(dayData.day);
-            modalContent.innerHTML = tasksHtml;
-            modalFooter.textContent = dayData.footer;
+    // Показуємо Санту
+    document.querySelector('#modal .santa-image-container').classList.remove('hidden');
 
-            // Показуємо Санту, якщо день відкрито
-            document.querySelector('#modal .santa-image-container').classList.remove('hidden');
-            showModal('modal');
-        }
-
-        // Функція для отримання опису посилання з URL (для естетики)
-        function getLinkText(url) {
-            if (url.includes('learningapps.org')) return 'Інтерактивна гра: LearningApps';
-            if (url.includes('wordwall.net')) return 'Онлайн-завдання: WordWall';
-            if (url.includes('storyjumper.com')) return 'Читання святкової історії: StoryJumper';
-            return 'Перейти до завдання (зовнішнє посилання)';
-        }
-
-        // Функція відкриття модального вікна для виконання окремого завдання
-        function openTaskModal(element) {
-            // Приховуємо основне вікно, щоб уникнути накладання
-            hideModal('modal');
-
-            const day = element.getAttribute('data-day');
-            const index = element.getAttribute('data-index');
-            const title = element.getAttribute('data-task-title');
-            const taskText = element.getAttribute('data-task-text');
-
-            taskModalTitle.textContent = `${title} (Завдання ${parseInt(index) + 1} з 3)`;
-            taskModalContent.textContent = taskText;
-
-            // Зберігаємо поточні дані в прихованих полях
-            currentTaskDay.value = day;
-            currentTaskIndex.value = index;
-
-            showModal('task-modal');
-        }
-
-        // Обробник кнопки "Я ВИКОНАВ ЦЕ ЗАВДАННЯ!" (Використовується лише для текстових завдань)
-        completeTaskButton.addEventListener('click', () => {
-            const day = parseInt(currentTaskDay.value);
-            const index = parseInt(currentTaskIndex.value);
-
-            if (day && index >= 0) {
-                // 1. Оновлюємо прогрес у localStorage
-                const progress = getProgress();
-                progress[day] = progress[day] || {};
-                progress[day][index] = true;
-                saveProgress(progress);
-                // 2. Закриваємо модальне вікно виконання завдання
-                hideModal('task-modal');
-                // 3. Перевіряємо, чи всі завдання виконані
-                const currentDayData = ADVENT_DAYS.find(d => d.day === day);
-                if (currentDayData) {
-                    const latestProgress = getProgress();
-                    const dayProgress = latestProgress[day] || {};
-                    const completedCount = Object.keys(dayProgress).filter(key => dayProgress[key] === true).length;
-                    if (completedCount === 3) {
-                        // Усі завдання виконано: показуємо сюрприз
-                        showModal('surprise-modal');
-                    } else {
-                        // Ще не всі завдання виконано: оновлюємо і показуємо головне вікно
-                        renderTasksInModal(currentDayData);
-                        showModal('modal');
-                    }
-                }
-            }
-        });
-
+    showModal('modal');
+}
 
         // Створення карток календаря
         function createCalendarCards() {
