@@ -70,6 +70,10 @@
         .santa-image-container { margin-bottom: 1.5rem; text-align: center; }
         .santa-image { max-width: 150px; height: auto; border-radius: 9999px; border: 5px solid #ef4444; box-shadow: 0 4px 10px rgba(0,0,0,0.2); display: inline-block; }
         /* Видаляємо .welcome-modal-width, замінюємо на адаптивні класи в HTML */
+		#modal ul li {
+			padding-left: 35px; /* робимо місце для іконки */
+			background-position: 5px center; /* щоб іконка не приліпала до краю */
+		}
 	</style>
 </head>
 <body class="min-h-screen flex flex-col items-center justify-center p-4">
@@ -225,9 +229,11 @@
                     const latestProgress = getProgress();
                     const dayProgress = latestProgress[day] || {};
                     const completedCount = Object.keys(dayProgress).filter(key => dayProgress[key] === true).length;
+					
+					const totalTasks = ADVENT_DAYS[day - 1].tasks.length;
 
                     // 3. Якщо всі завдання виконані, показуємо сюрприз
-                    if (completedCount === 5) {
+                    if (completedCount === totalTasks) {
                         hideModal('modal'); // Приховуємо основне вікно
                         showModal('surprise-modal');
 						// Визначаємо HTML-елемент
@@ -407,22 +413,6 @@
 					  url: "###",
 					  title: " #####"
 					},
-					{ 
-					  url: "###",
-					  title: " #####"
-					},
-					{ 
-					  url: "###",
-					  title: " #####"
-					},
-					{ 
-					  url: "###",
-					  title: " #####"
-					},
-					{ 
-					  url: "###",
-					  title: " #####"
-					}
 				 ], footer: "" },
         ];
 
@@ -449,42 +439,41 @@
 		}
 
         // Функція для відображення списку завдань у головному модальному вікні
-        // Функція для відображення списку завдань у головному модальному вікні
-function renderTasksInModal(dayData) {
-    const dayNumber = dayData.day;
-    const progress = getProgress();
-    const dayProgress = progress[dayNumber] || {};
+		function renderTasksInModal(dayData) {
+			const dayNumber = dayData.day;
+			const progress = getProgress();
+			const dayProgress = progress[dayNumber] || {};
 
-    currentDayTasks = dayData; // Запамʼятовуємо поточний день
+			currentDayTasks = dayData; // Запамʼятовуємо поточний день
 
-    let tasksHtml = dayData.tasks.map((task, index) => {
-        const isCompleted = dayProgress[index] === true;
-        const completedClass = isCompleted ? 'completed' : '';
+			let tasksHtml = dayData.tasks.map((task, index) => {
+				const isCompleted = dayProgress[index] === true;
+				const completedClass = isCompleted ? 'completed' : '';
 
-        // Оскільки тепер кожне завдання — це {url, title}, просто рендеримо <a>
-        return `
-            <li class="${completedClass}">
-                <a href="${task.url}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   onclick="completeTaskByLink(${dayNumber}, ${index});">
-                   ${task.title}
-                </a>
-            </li>
-        `;
-    }).join('');
+				// Оскільки тепер кожне завдання — це {url, title}, просто рендеримо <a>
+				return `
+					<li class="${completedClass}">
+						<a href="${task.url}"
+						   target="_blank"
+						   rel="noopener noreferrer"
+						   onclick="completeTaskByLink(${dayNumber}, ${index});">
+						   ${task.title}
+						</a>
+					</li>
+				`;
+			}).join('');
 
-    modalTitle.textContent = `${dayData.date}`;
-    setModalSubtitleForDay(dayData.day);
+			modalTitle.textContent = `${dayData.date}`;
+			setModalSubtitleForDay(dayData.day);
 
-    modalContent.innerHTML = tasksHtml;
-    modalFooter.textContent = dayData.footer;
+			modalContent.innerHTML = tasksHtml;
+			modalFooter.textContent = dayData.footer;
 
-    // Показуємо Санту
-    document.querySelector('#modal .santa-image-container').classList.remove('hidden');
+			// Показуємо Санту
+			document.querySelector('#modal .santa-image-container').classList.remove('hidden');
 
-    showModal('modal');
-}
+			showModal('modal');
+		}
 
         // Створення карток календаря
         function createCalendarCards() {
